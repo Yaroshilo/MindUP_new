@@ -1,9 +1,7 @@
-<<<<<<< HEAD
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-=======
-1. Open .Bat file
->>>>>>> 3d7c536c5e0eaf1e5be0253f2581ff6c417d31c3
+# For Web
+1. Download Node.Js
+2. Run run_local.bat file
+#For mobile
+1. open apk
+#If ai doesnt work:
+1. Open 'Old' folder and run run_local.bat 
