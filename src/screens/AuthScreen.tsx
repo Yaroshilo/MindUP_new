@@ -42,7 +42,7 @@ export default function AuthScreen({ onLogin }: Props) {
         if (role === 'parent' && !studentId) { setError('Введите ID ученика'); return; }
 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const profileData = {
+        const profileData = JSON.parse(JSON.stringify({
           name,
           role,
           schoolCode: schoolCode || null,
@@ -51,9 +51,9 @@ export default function AuthScreen({ onLogin }: Props) {
           totalXP: 0,
           level: role === 'student' ? 'Новичок' : role === 'teacher' ? 'Наставник' : 'Попечитель',
           achievements: [],
-          classId: role === 'student' || role === 'teacher' ? classId : undefined,
-          subject: role === 'teacher' ? subject : undefined,
-        };
+          classId: role === 'student' || role === 'teacher' ? classId : null,
+          subject: role === 'teacher' ? subject : null,
+        }));
         
         await setDoc(doc(db, 'users', userCredential.user.uid), profileData);
         onLogin(role, name, profileData);

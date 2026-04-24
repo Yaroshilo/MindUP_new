@@ -32,11 +32,13 @@ export default function App() {
 
   const addTasksToDB = async (newTasks: Partial<Task>[]) => {
     try {
+      const uid = auth.currentUser?.uid;
       for (const t of newTasks) {
         // Clean data for Firestore (remove undefined)
         const cleanTask = JSON.parse(JSON.stringify({
           ...t,
           status: t.status || 'active',
+          ownerId: t.ownerId || uid,
           classId: t.classId || userProfile?.classId || '9-A' // Ensure classId exists for filtering
         }));
         await addDoc(collection(db, 'tasks'), cleanTask);
@@ -130,10 +132,14 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const filteredTasks = tasks.filter(t => {
-    if (userProfile?.role === 'student') {
-      return t.classId === userProfile.classId;
+    if (!userProfile) return false;
+    const uid = auth.currentUser?.uid;
+    
+    if (userProfile.role === 'student') {
+      // Students see tasks for their class OR tasks they created themselves
+      return t.classId === userProfile.classId || t.ownerId === uid;
     }
-    if (userProfile?.role === 'teacher') {
+    if (userProfile.role === 'teacher') {
       // Teachers see tasks for their subject OR for their own class, OR pending ones in their class
       return (t.subject === userProfile.subject) || (t.classId === userProfile.classId && t.status === 'pending');
     }
