@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Users } from 'lucide-react';
+import { Plus, Users, Sparkles } from 'lucide-react';
 import BottomNav from './components/BottomNav';
 import HomeScreen from './screens/HomeScreen';
 import TasksScreen from './screens/TasksScreen';
@@ -316,19 +316,18 @@ export default function App() {
         {userProfile.role === 'student' && (activeTab === 'home' || activeTab === 'tasks') && !selectedTask && (
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="absolute bottom-24 right-6 w-14 h-14 bg-lime-400 hover:bg-lime-500 rounded-2xl shadow-lg flex items-center justify-center text-blue-900 transition-transform active:scale-95 z-20"
+            className="fixed bottom-[108px] right-6 w-16 h-16 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-[0_12px_24px_-8px_rgba(5,150,105,0.4)] flex items-center justify-center transition-all active:scale-90 z-40 group"
           >
-            <Plus size={28} strokeWidth={2.5} />
+            <Plus size={32} strokeWidth={3} className="group-hover:rotate-90 transition-transform duration-300" />
           </button>
         )}
 
         {userProfile.role === 'teacher' && (activeTab === 'home' || activeTab === 'classes') && (
           <button
              onClick={() => setIsClassTaskModalOpen(true)}
-             className="absolute bottom-24 right-4 flex items-center gap-2 px-5 h-14 bg-indigo-600 hover:bg-indigo-700 rounded-2xl shadow-lg shadow-indigo-600/30 text-white transition-transform active:scale-95 z-20 font-bold"
+             className="fixed bottom-[108px] right-6 w-16 h-16 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-[0_12px_24px_-8px_rgba(5,150,105,0.4)] flex items-center justify-center transition-all active:scale-90 z-40 group"
           >
-             <Plus size={24} strokeWidth={2.5} />
-             Выдать задание
+             <Plus size={32} strokeWidth={3} className="group-hover:rotate-90 transition-transform duration-300" />
           </button>
         )}
 
@@ -339,6 +338,11 @@ export default function App() {
              onBack={() => setSelectedTask(null)}
              onComplete={(id, solution) => handleSubmitForReview(id, solution)}
              onSos={(id, reason) => handleSos(id, reason)}
+             onUpdateSteps={(taskId, steps) => {
+               updateTaskInDB(taskId, { steps });
+               // Update local state too
+               setTasks(prev => prev.map(t => t.id === taskId ? { ...t, steps } : t));
+             }}
            />
         )}
 
@@ -371,9 +375,11 @@ export default function App() {
         
         {/* Custom Toast Snackbar */}
         {toastMessage && (
-          <div className="absolute top-4 left-4 right-4 z-[100] bg-lime-400 text-lime-950 font-bold p-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-10 duration-500">
-            <span className="text-3xl">🎯</span>
-            <span className="leading-snug flex-1">{toastMessage}</span>
+          <div className="absolute top-6 left-6 right-6 z-[100] bg-white border border-emerald-100 text-slate-800 font-bold p-4 rounded-3xl shadow-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-10 duration-500">
+            <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
+               <Sparkles className="text-emerald-500" size={20} strokeWidth={2.5} />
+            </div>
+            <span className="leading-snug flex-1 text-sm">{toastMessage}</span>
           </div>
         )}
       </div>

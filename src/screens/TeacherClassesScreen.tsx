@@ -9,52 +9,55 @@ export default function TeacherClassesScreen() {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-emerald-50/50 animate-in fade-in">
-      <div className="bg-gradient-to-br from-emerald-600 to-teal-600 pt-8 pb-6 px-4 shadow-sm z-10 shrink-0 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+    <div className="flex flex-col h-full bg-[#fcfdfc] animate-in fade-in">
+      <div className="bg-white/90 backdrop-blur-md pt-6 pb-4 px-5 border-b border-slate-100 z-10 shrink-0">
         <div className="relative z-10">
-          <h1 className="text-3xl font-extrabold text-white mb-4">Мои классы</h1>
+          <h1 className="text-xl font-black text-slate-800 mb-5 uppercase tracking-widest leading-none px-1">Мои классы</h1>
           
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
               placeholder="Поиск класса или ученика..." 
-              className="w-full bg-white/10 border border-white/20 rounded-[16px] py-3 pl-10 pr-4 text-white placeholder:text-white/50 font-medium outline-none focus:bg-white/20 transition-colors"
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3.5 pl-12 pr-4 text-slate-800 placeholder:text-slate-400 font-medium outline-none focus:bg-white focus:border-emerald-300 transition-all text-sm shadow-sm"
             />
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 pb-32">
         {classes.map(cls => (
-          <div key={cls.id} className="bg-white rounded-[24px] p-5 shadow-sm border border-emerald-100 flex flex-col gap-4 group hover:border-emerald-200 transition-colors cursor-pointer">
-            <div className="flex justify-between items-center">
-               <div className="flex items-center gap-3">
-                 <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center font-extrabold text-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                   {cls.name}
+          <div key={cls.id} className="bg-white rounded-[28px] p-5 shadow-sm border border-slate-100 flex flex-col gap-5 group hover:border-emerald-100 transition-all cursor-pointer">
+            <div className="flex justify-between items-start">
+               <div className="flex items-center gap-4">
+                 <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-[20px] flex items-center justify-center font-black text-xl group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-inner">
+                   {cls.name.replace(/"/g, '')}
                  </div>
-                 <div>
-                   <p className="font-bold text-slate-800 flex items-center gap-1">
-                     <Users size={14} className="text-slate-400" /> {cls.studentsCount} учеников
-                   </p>
-                   <p className="text-xs font-bold text-slate-400 mt-0.5">Лидер: {cls.topStudent}</p>
+                 <div className="space-y-1">
+                   <h3 className="font-bold text-slate-800 text-lg leading-none">{cls.name}</h3>
+                   <div className="flex items-center gap-3">
+                     <span className="flex items-center gap-1 text-[11px] font-bold text-slate-400">
+                       <Users size={12} /> {cls.studentsCount}
+                     </span>
+                     <span className="text-[11px] font-bold text-slate-400">•</span>
+                     <span className="text-[11px] font-bold text-slate-500">Лидер: {cls.topStudent.split(' ')[0]}</span>
+                   </div>
                  </div>
                </div>
                
                <div className="text-right">
-                 <div className="font-extrabold text-emerald-600 text-lg flex items-center justify-end gap-1">
-                   <TrendingUp size={16} /> {cls.avgXP}
+                 <div className="font-black text-emerald-600 text-lg flex items-center justify-end gap-1 leading-none">
+                    {cls.avgXP}
                  </div>
-                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">Средний XP</p>
+                 <p className="text-[9px] font-black uppercase tracking-widest text-slate-300 mt-1">Средний XP</p>
                </div>
             </div>
             
-            <div className="flex gap-2 pt-2 border-t border-slate-50">
-               <button className="flex-1 bg-slate-50 text-slate-600 hover:bg-slate-100 font-bold py-2 rounded-[12px] text-sm transition-colors">
+            <div className="flex gap-3 pt-4 border-t border-slate-50">
+               <button className="flex-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-black py-4 rounded-xl text-[10px] uppercase tracking-widest transition-all active:scale-[0.98] border border-emerald-100/50">
                  Успеваемость
                </button>
-               <button className="flex-1 bg-slate-50 text-slate-600 hover:bg-slate-100 font-bold py-2 rounded-[12px] text-sm transition-colors">
+               <button className="flex-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-black py-4 rounded-xl text-[10px] uppercase tracking-widest transition-all active:scale-[0.98] border border-emerald-100/50">
                  Журнал задач
                </button>
             </div>

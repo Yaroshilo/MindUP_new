@@ -1,19 +1,23 @@
 import React, { useState, useRef } from 'react';
-import { Task } from '../types';
-import { ArrowLeft, CheckCircle2, Clock, Star, Flame, LifeBuoy, X, Send, Camera, Sparkles, Loader2 } from 'lucide-react';
+import { Task, TaskStep } from '../types';
+import { ArrowLeft, CheckCircle2, Clock, Star, Flame, LifeBuoy, X, Send, Camera, Sparkles, Loader2, ListTree } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { generateTaskSteps } from '../services/geminiService';
 
 interface Props {
   task: Task;
   onBack: () => void;
   onComplete: (id: string, solution: string) => void;
   onSos?: (id: string, message: string) => void;
+  onUpdateSteps?: (taskId: string, steps: TaskStep[]) => void;
 }
 
-export default function TaskDetailScreen({ task, onBack, onComplete, onSos }: Props) {
+export default function TaskDetailScreen({ task, onBack, onComplete, onSos, onUpdateSteps }: Props) {
   const [steps, setSteps] = useState(task.steps || []);
+  const [isBreakingDown, setIsBreakingDown] = useState(false);
   const [isSosModalOpen, setIsSosModalOpen] = useState(false);
   const [sosReason, setSosReason] = useState("");
+  const [isReminderSent, setIsReminderSent] = useState(false);
   
   const [isChecking, setIsChecking] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
@@ -80,12 +84,30 @@ export default function TaskDetailScreen({ task, onBack, onComplete, onSos }: Pr
     }
   };
 
+  const handleAiBreakdown = async () => {
+    setIsBreakingDown(true);
+    try {
+      const newSteps = await generateTaskSteps(task);
+      setSteps(newSteps);
+      onUpdateSteps?.(task.id, newSteps);
+    } catch (e) {
+      console.error("Breakdown error:", e);
+    } finally {
+      setIsBreakingDown(false);
+    }
+  };
+
+  const handleSendReminder = () => {
+    setIsReminderSent(true);
+    setTimeout(() => setIsReminderSent(false), 3000);
+  };
+
   const isUrgent = task.priority === 'high' && task.status === 'active';
   const isCompleted = task.status === 'completed';
   const allStepsCompleted = steps.length > 0 && steps.every(s => s.isCompleted);
 
   return (
-    <div className="absolute inset-0 z-50 bg-emerald-50 flex flex-col animate-in slide-in-from-right duration-300">
+    <div className="fixed inset-0 z-50 bg-emerald-50 flex flex-col animate-in slide-in-from-right duration-300">
       {/* Header */}
       <div className="bg-emerald-50 px-4 py-4 border-b border-emerald-100 flex items-center shadow-sm shrink-0">
         <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-600 transition-colors">
@@ -97,7 +119,25 @@ export default function TaskDetailScreen({ task, onBack, onComplete, onSos }: Pr
       <div className="flex-1 overflow-y-auto pb-32 p-4 sm:p-6 space-y-6">
         {/* Task Info block */}
         <div className={`bg-emerald-100/40 rounded-[28px] p-6 shadow-sm border-2 ${isUrgent ? 'border-red-400 shadow-red-100' : 'border-emerald-100/50'}`}>
-          <div className="flex items-start justify-between mb-4">
+          {!isCompleted && steps.length > 0 && steps.every(s => !s.isCompleted) && (
+             <div className="bg-amber-100/50 border border-amber-200 rounded-2xl p-4 flex items-start gap-4 mb-5 animate-in slide-in-from-top duration-500">
+               <div className="w-10 h-10 bg-amber-400 text-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                 <Sparkles size={20} strokeWidth={2.5} />
+               </div>
+               <div className="flex-1">
+                 <p className="text-xs font-black text-amber-900 leading-snug">
+                   ИИ наставник заметил, что ты еще не приступил к делу.
+                 </p>
+                 <button 
+                  onClick={handleSendReminder}
+                  className="mt-2 text-[10px] font-black uppercase tracking-widest text-amber-700 hover:text-amber-900 transition-colors"
+                 >
+                   {isReminderSent ? '✅ Уведомление отправлено' : '🚀 Получить мотивацию'}
+                 </button>
+               </div>
+             </div>
+           )}
+           <div className="flex items-start justify-between mb-4">
             <div className={`text-xs font-extrabold uppercase tracking-widest px-3 py-1 rounded-[10px] inline-flex items-center gap-1.5 ${isUrgent ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'}`}>
                {isUrgent ? <><Flame size={14} className="fill-red-500" /> Горящая задача</> : task.subject}
             </div>
@@ -118,15 +158,31 @@ export default function TaskDetailScreen({ task, onBack, onComplete, onSos }: Pr
         </div>
 
         {/* Decomposition Block */}
-        {steps.length > 0 && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150 fill-mode-both">
-            <h3 className="font-bold text-slate-800 text-xl px-1">
-              Шаги для выполнения 
-              <span className="block text-[13px] text-slate-400 font-bold uppercase tracking-wider mt-1 opacity-80">
-                ⚡️ План от наставника
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150 fill-mode-both">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="font-black text-slate-800 text-xl">
+              Шаги к успеху
+              <span className="block text-[11px] text-emerald-500 font-bold uppercase tracking-wider mt-1">
+                {steps.length > 0 ? '⚡️ Твой персональный план' : '🤖 ИИ готов помочь'}
               </span>
             </h3>
-            
+            {steps.length === 0 && !isCompleted && (
+              <button 
+                onClick={handleAiBreakdown}
+                disabled={isBreakingDown}
+                className="bg-slate-900 border-b-4 border-slate-800 hover:bg-slate-800 text-white px-4 py-2 rounded-2xl flex items-center gap-2 text-xs font-black transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isBreakingDown ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <ListTree size={16} strokeWidth={3} className="text-emerald-400" />
+                )}
+                РАЗБИТЬ С ИИ
+              </button>
+            )}
+          </div>
+          
+          {steps.length > 0 ? (
             <div className="bg-white rounded-[28px] shadow-sm overflow-hidden p-2 border border-slate-100">
               {steps.map(step => (
                 <label key={step.id} className="flex items-start gap-4 p-4 hover:bg-slate-50 rounded-[20px] cursor-pointer transition-colors group">
@@ -136,18 +192,27 @@ export default function TaskDetailScreen({ task, onBack, onComplete, onSos }: Pr
                       checked={step.isCompleted || isCompleted} 
                       onChange={() => toggleStep(step.id)}
                       disabled={isCompleted}
-                      className="peer appearance-none w-7 h-7 border-2 border-slate-300 rounded-[10px] checked:bg-lime-500 checked:border-lime-500 disabled:opacity-50 transition-all cursor-pointer"
+                      className="peer appearance-none w-7 h-7 border-2 border-slate-300 rounded-[10px] checked:bg-emerald-500 checked:border-emerald-500 disabled:opacity-50 transition-all cursor-pointer"
                     />
                     <CheckCircle2 size={18} strokeWidth={3} className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" />
                   </div>
-                  <span className={`flex-1 text-[17px] font-bold leading-snug transition-all ${(step.isCompleted || isCompleted) ? 'text-slate-400 line-through decoration-2' : 'text-slate-700 group-hover:text-slate-900'}`}>
+                  <span className={`flex-1 text-[17px] font-bold leading-snug transition-all ${(step.isCompleted || isCompleted) ? 'text-slate-300 line-through' : 'text-slate-700'}`}>
                     {step.title}
                   </span>
                 </label>
               ))}
             </div>
-          </div>
-        )}
+          ) : !isBreakingDown && (
+            <div className="p-8 bg-white border border-dashed border-slate-200 rounded-[32px] flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
+                 <ListTree size={32} className="text-slate-300" />
+              </div>
+              <p className="text-sm font-bold text-slate-400 max-w-[200px]">
+                Нажми кнопку выше, чтобы ИИ составил план действий
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Bottom sticky action */}

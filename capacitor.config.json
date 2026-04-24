@@ -1,0 +1,6 @@
+{
+  "appId": "com.mindup.app",
+  "appName": "MindUp",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

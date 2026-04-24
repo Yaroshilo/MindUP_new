@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { CheckCircle2, MessageSquare, Flame, BarChart3, Users, Zap, Search, ChevronRight, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { CheckCircle2, MessageSquare, Flame, BarChart3, Users, Zap, Search, ChevronRight, Sparkles, Loader2 } from 'lucide-react';
 import { Task } from '../types';
+import { analyzeDifficulties } from '../services/geminiService';
 
 export default function TeacherWorkspaceScreen({ tasks, onAcceptTask, onReturnTask, onReplySos }: { 
   tasks: Task[], 
@@ -9,6 +10,25 @@ export default function TeacherWorkspaceScreen({ tasks, onAcceptTask, onReturnTa
   onReplySos: (taskId: string) => void
 }) {
   const [activeTab, setActiveTab] = useState<'review' | 'sos' | 'dashboard' | 'classes'>('review');
+  const [aiInsight, setAiInsight] = useState<{ topic: string, advice: string } | null>(null);
+  const [isInsightLoading, setIsInsightLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === 'dashboard') {
+      const fetchInsight = async () => {
+        setIsInsightLoading(true);
+        try {
+          const insight = await analyzeDifficulties(tasks);
+          setAiInsight(insight);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setIsInsightLoading(false);
+        }
+      };
+      fetchInsight();
+    }
+  }, [activeTab, tasks]);
   const [grades, setGrades] = useState<Record<string, number>>({});
   const [feedback, setFeedback] = useState<Record<string, string>>({});
   const [isAiChecking, setIsAiChecking] = useState<Record<string, boolean>>({});
@@ -57,45 +77,45 @@ export default function TeacherWorkspaceScreen({ tasks, onAcceptTask, onReturnTa
   const quickFeedback = ["Отлично!", "Хорошая работа", "Переделай", "Мало деталей", "Супер! 🎯"];
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 animate-in fade-in overflow-hidden">
-      <div className="bg-white/80 backdrop-blur-md pt-8 pb-4 px-4 shadow-sm z-10 shrink-0 border-b border-emerald-100">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-extrabold text-slate-800">Кабинет</h1>
-          <div className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm">
-             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-             В сети
+    <div className="flex flex-col h-full bg-[#fcfdfc] animate-in fade-in overflow-hidden">
+      <div className="bg-white/90 backdrop-blur-md pt-6 pb-4 px-5 border-b border-slate-100 z-10 shrink-0">
+        <div className="flex justify-between items-center mb-5 px-1">
+          <h1 className="text-xl font-black text-slate-800 uppercase tracking-widest leading-none">Кабинет</h1>
+          <div className="bg-emerald-50 text-emerald-600 h-7 inline-flex items-center px-3 rounded-xl text-[9px] font-black uppercase tracking-widest gap-1.5 border border-emerald-100 shadow-sm leading-none">
+             <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+              В сети
           </div>
         </div>
         
-        <div className="flex bg-slate-100 p-1.5 rounded-[22px] gap-1 overflow-x-auto scrollbar-hide shrink-0">
+        <div className="flex bg-slate-50 p-1 rounded-2xl gap-1 overflow-x-auto scrollbar-hide shrink-0 border border-slate-100">
           <button 
             onClick={() => setActiveTab('review')}
-            className={`whitespace-nowrap px-4 py-2.5 font-bold text-xs rounded-[16px] transition-all flex items-center justify-center gap-2 ${
-              activeTab === 'review' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            className={`whitespace-nowrap px-4 py-2.5 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'review' ? 'bg-white text-emerald-600 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
-            Проверка <span className="bg-emerald-100 text-emerald-600 px-2 rounded-full text-[10px] py-0.5">{reviews.length}</span>
+            Проверка <span className={`px-1.5 py-0.5 rounded-md ${activeTab === 'review' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-200/50 text-slate-400'}`}>{reviews.length}</span>
           </button>
           <button 
             onClick={() => setActiveTab('sos')}
-            className={`whitespace-nowrap px-4 py-2.5 font-bold text-xs rounded-[16px] transition-all flex items-center justify-center gap-2 ${
-              activeTab === 'sos' ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            className={`whitespace-nowrap px-4 py-2.5 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'sos' ? 'bg-white text-orange-500 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
-            SOS <span className="bg-orange-100 text-orange-600 px-2 rounded-full text-[10px] py-0.5">{sosRequests.length}</span>
+            SOS <span className={`px-1.5 py-0.5 rounded-md ${activeTab === 'sos' ? 'bg-orange-50 text-orange-600' : 'bg-slate-200/50 text-slate-400'}`}>{sosRequests.length}</span>
           </button>
           <button 
             onClick={() => setActiveTab('dashboard')}
-            className={`whitespace-nowrap px-4 py-2.5 font-bold text-xs rounded-[16px] transition-all flex items-center justify-center gap-2 ${
-              activeTab === 'dashboard' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            className={`whitespace-nowrap px-4 py-2.5 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'dashboard' ? 'bg-white text-indigo-500 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
             Сводка
           </button>
           <button 
             onClick={() => setActiveTab('classes')}
-            className={`whitespace-nowrap px-4 py-2.5 font-bold text-xs rounded-[16px] transition-all flex items-center justify-center gap-2 ${
-              activeTab === 'classes' ? 'bg-white text-purple-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            className={`whitespace-nowrap px-4 py-2.5 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'classes' ? 'bg-white text-emerald-500 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
             Классы
@@ -103,31 +123,49 @@ export default function TeacherWorkspaceScreen({ tasks, onAcceptTask, onReturnTa
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24">
+      <div className="flex-1 overflow-y-auto p-5 space-y-5 pb-32">
         {activeTab === 'dashboard' && (
-          <div className="space-y-4 animate-in slide-in-from-bottom-5 duration-300">
-             <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm relative overflow-hidden">
-                   <div className="absolute top-0 right-0 p-3 text-blue-100"><BarChart3 size={40} /></div>
-                   <div className="text-3xl font-black text-slate-800">{stats.efficiency}%</div>
-                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Освоение программы</div>
+          <div className="space-y-5 animate-in slide-in-from-bottom-5 duration-300">
+             <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm relative overflow-hidden group">
+                   <div className="absolute top-0 right-0 p-3 text-slate-50 group-hover:text-emerald-50 transition-colors"><BarChart3 size={40} /></div>
+                   <div className="relative z-10">
+                     <div className="text-3xl font-black text-slate-800">{stats.efficiency}%</div>
+                     <div className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-2 px-1">Программа</div>
+                   </div>
                 </div>
-                <div className="bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm relative overflow-hidden">
-                   <div className="absolute top-0 right-0 p-3 text-emerald-100"><CheckCircle2 size={40} /></div>
-                   <div className="text-3xl font-black text-emerald-600">{stats.completed}</div>
-                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Выполнено заданий</div>
+                <div className="bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm relative overflow-hidden group">
+                   <div className="absolute top-0 right-0 p-3 text-slate-50 group-hover:text-emerald-50 transition-colors"><CheckCircle2 size={40} /></div>
+                   <div className="relative z-10">
+                     <div className="text-3xl font-black text-emerald-600">{stats.completed}</div>
+                     <div className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-2 px-1">Готово</div>
+                   </div>
                 </div>
              </div>
 
-             <div className="bg-gradient-to-br from-indigo-600 to-blue-700 p-6 rounded-[32px] text-white shadow-xl shadow-blue-200">
+             <div className="bg-emerald-600 p-6 rounded-[32px] text-white shadow-xl shadow-emerald-500/10 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform"></div>
                 <div className="flex justify-between items-start mb-4">
-                   <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md"><Zap size={20} className="fill-white" /></div>
-                   <span className="text-[10px] font-bold uppercase py-1 px-2 bg-white/10 rounded-lg">Совет ИИ</span>
+                   <div className="bg-white/10 p-2.5 rounded-xl border border-white/10">
+                     {isInsightLoading ? <Loader2 size={20} className="animate-spin" /> : <Sparkles size={20} strokeWidth={2.5} className="text-white" />}
+                   </div>
+                   <span className="text-[9px] font-black uppercase tracking-widest py-1 px-2.5 bg-white/10 rounded-lg border border-white/5">Аналитика от ИИ</span>
                 </div>
-                <h3 className="text-lg font-bold leading-tight mb-2">Класс 9-A отстает по Геометрии</h3>
-                <p className="text-xs text-blue-100 font-medium leading-relaxed opacity-90">
-                  Рекомендуется упростить следующий тест или провести дополнительную консультацию. 65% учеников еще не сдали тест №4.
-                </p>
+                {isInsightLoading ? (
+                  <div className="space-y-2">
+                    <div className="h-6 w-32 bg-white/10 rounded-lg animate-pulse"></div>
+                    <div className="h-4 w-full bg-white/5 rounded-lg animate-pulse"></div>
+                  </div>
+                ) : (
+                  <>
+                    <h3 className="text-lg font-bold leading-tight mb-2 tracking-tight">
+                      {aiInsight?.topic || "Анализирую данные..."}
+                    </h3>
+                    <p className="text-xs text-emerald-50 font-medium leading-relaxed opacity-80">
+                      {aiInsight?.advice || "Пожалуйста, подождите, пока ИИ соберет информацию о сложностях учеников."}
+                    </p>
+                  </>
+                )}
              </div>
 
              <div className="bg-white rounded-[28px] p-5 border border-slate-100 shadow-sm">
@@ -322,12 +360,12 @@ export default function TeacherWorkspaceScreen({ tasks, onAcceptTask, onReturnTa
         ))}
 
         {((activeTab === 'review' && reviews.length === 0) || (activeTab === 'sos' && sosRequests.length === 0)) && (
-          <div className="flex flex-col items-center justify-center h-64 text-slate-400 opacity-60">
-            <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle2 size={48} className="opacity-30" strokeWidth={1} />
+          <div className="flex flex-col items-center justify-center h-64 text-slate-500">
+            <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6 border border-slate-200/50">
+              <CheckCircle2 size={48} className="text-slate-200" strokeWidth={1.5} />
             </div>
-            <p className="font-bold text-lg">Задач нет</p>
-            <p className="text-xs font-medium">Ваш рабочий день на сегодня чист!</p>
+            <p className="font-black text-xs uppercase tracking-widest text-slate-400 mb-2">Рабочий день чист</p>
+            <p className="text-[11px] font-bold text-slate-400 opacity-80 text-center">Все задачи проверены, <br/>ученики могут отдыхать!</p>
           </div>
         )}
       </div>

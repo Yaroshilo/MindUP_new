@@ -86,12 +86,11 @@ export default function AuthScreen({ onLogin }: Props) {
     <div className="flex-1 flex flex-col p-6 bg-emerald-50 overflow-y-auto">
       {/* Header */}
       <div className="pt-12 pb-8 flex flex-col items-center">
-        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 relative">
-          <GraduationCap className="absolute top-1 right-2 text-[#4d4d4d] rotate-[15deg] z-10" size={40} strokeWidth={1} fill="#4d4d4d" />
-          <span className="text-[5rem] leading-none mb-2 font-extrabold italic text-[#8cbdb1]" style={{ fontFamily: 'Brush Script MT, cursive' }}>M</span>
+        <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-sm mb-6 relative border border-emerald-100">
+          <GraduationCap className="text-emerald-500" size={42} strokeWidth={2.5} />
         </div>
-        <h1 className="text-3xl font-bold text-slate-800 tracking-tight">MindUp</h1>
-        <p className="text-slate-500 font-medium mt-2 text-center text-sm">Твой персональный учебный наставник</p>
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight uppercase">MindUp</h1>
+        <p className="text-slate-500 font-bold mt-3 text-center text-xs px-8 leading-relaxed">Твой персональный учебный наставник</p>
       </div>
 
       {/* Role Selection */}
@@ -108,14 +107,14 @@ export default function AuthScreen({ onLogin }: Props) {
                 key={r}
                 type="button"
                 onClick={() => { setRole(r); setError(null); }}
-                className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${
+                className={`flex flex-col items-center gap-3 p-4 rounded-3xl border-2 transition-all ${
                   isActive 
-                    ? 'bg-emerald-600 border-emerald-600 text-white shadow-md scale-105' 
-                    : 'bg-white border-slate-100 text-slate-400 hover:border-emerald-200'
+                    ? 'bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-500/20 scale-105' 
+                    : 'bg-white border-slate-100 text-slate-500 hover:border-emerald-200 hover:text-emerald-600'
                 }`}
               >
-                <Icon size={20} />
-                <span className="text-[10px] font-bold uppercase">{label}</span>
+                <Icon size={24} strokeWidth={2.5} />
+                <span className="text-[10px] font-bold">{label}</span>
               </button>
             )
           })}
@@ -123,14 +122,14 @@ export default function AuthScreen({ onLogin }: Props) {
       </div>
 
       {/* Tabs / Toggle */}
-      <div className="flex bg-slate-100 p-1.5 rounded-[20px] mb-6">
+      <div className="flex bg-slate-200/50 p-1.5 rounded-[22px] mb-6">
         <button
           type="button"
           onClick={() => { setIsRegister(false); setError(null); }}
-          className={`flex-1 py-3 text-sm font-bold rounded-[16px] transition-all ${
+          className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-[18px] transition-all ${
             !isRegister 
-              ? 'bg-white text-emerald-600 shadow-sm' 
-              : 'text-slate-500 hover:text-slate-700'
+              ? 'bg-white text-emerald-600 shadow-sm border border-slate-100' 
+              : 'text-slate-400 hover:text-slate-600'
           }`}
         >
           Вход
@@ -138,10 +137,10 @@ export default function AuthScreen({ onLogin }: Props) {
         <button
           type="button"
           onClick={() => { setIsRegister(true); setError(null); }}
-          className={`flex-1 py-3 text-sm font-bold rounded-[16px] transition-all ${
+          className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-[18px] transition-all ${
             isRegister 
-              ? 'bg-white text-emerald-600 shadow-sm' 
-              : 'text-slate-500 hover:text-slate-700'
+              ? 'bg-white text-emerald-600 shadow-sm border border-slate-100' 
+              : 'text-slate-400 hover:text-slate-600'
           }`}
         >
           Регистрация
@@ -160,37 +159,37 @@ export default function AuthScreen({ onLogin }: Props) {
         {isRegister && (
           <div className="animate-in fade-in slide-in-from-top-4 duration-300 space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">ФИО / Никнейм</label>
+              <label className="block text-[13px] font-semibold text-slate-600 mb-1.5 ml-1">ФИО / Никнейм</label>
               <input 
                 type="text" 
                 value={name}
                 onChange={(e) => { setName(e.target.value); setError(null); }}
                 placeholder="Как к вам обращаться?"
-                className="w-full bg-white border-2 border-slate-100 rounded-[16px] px-4 py-3.5 text-slate-700 outline-none focus:border-emerald-500 transition-all text-base font-semibold"
+                className="w-full bg-white border border-slate-200 rounded-[18px] px-4 py-4 text-slate-700 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-base font-medium shadow-sm"
               />
             </div>
             {(role === 'student' || role === 'teacher') && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Код школы</label>
+                <label className="block text-[13px] font-semibold text-slate-600 mb-1.5 ml-1">Код школы</label>
                 <input 
                   type="text" 
                   value={schoolCode}
                   onChange={(e) => { setSchoolCode(e.target.value); setError(null); }}
                   placeholder="Введите код школы"
-                  className="w-full bg-white border-2 border-slate-100 rounded-[16px] px-4 py-3.5 text-slate-700 outline-none focus:border-emerald-500 transition-all text-base font-semibold"
+                  className="w-full bg-white border border-slate-200 rounded-[18px] px-4 py-4 text-slate-700 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-base font-medium shadow-sm"
                 />
               </div>
             )}
             
             {(role === 'student' || role === 'teacher' || role === 'parent') && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">
+                <label className="block text-[13px] font-semibold text-slate-600 mb-1.5 ml-1">
                   {role === 'parent' ? 'Класс ребенка' : 'Класс'}
                 </label>
                 <select 
                   value={classId}
                   onChange={(e) => { setClassId(e.target.value); setError(null); }}
-                  className="w-full bg-white border-2 border-slate-100 rounded-[16px] px-4 py-3.5 text-slate-700 outline-none focus:border-emerald-500 transition-all text-base font-semibold appearance-none"
+                  className="w-full bg-white border border-slate-200 rounded-[18px] px-4 py-4 text-slate-700 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-base font-medium shadow-sm appearance-none"
                 >
                   {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -199,11 +198,11 @@ export default function AuthScreen({ onLogin }: Props) {
 
             {role === 'teacher' && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Предмет</label>
+                <label className="block text-[13px] font-semibold text-slate-600 mb-1.5 ml-1">Предмет</label>
                 <select 
                   value={subject}
                   onChange={(e) => { setSubject(e.target.value); setError(null); }}
-                  className="w-full bg-white border-2 border-slate-100 rounded-[16px] px-4 py-3.5 text-slate-700 outline-none focus:border-emerald-500 transition-all text-base font-semibold appearance-none"
+                  className="w-full bg-white border border-slate-200 rounded-[18px] px-4 py-4 text-slate-700 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-base font-medium shadow-sm appearance-none"
                 >
                   {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -212,13 +211,13 @@ export default function AuthScreen({ onLogin }: Props) {
 
             {role === 'parent' && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">ID ученика</label>
+                <label className="block text-[13px] font-semibold text-slate-600 mb-1.5 ml-1">ID ученика</label>
                 <input 
                   type="text" 
                   value={studentId}
                   onChange={(e) => { setStudentId(e.target.value); setError(null); }}
                   placeholder="Введите ID ребенка"
-                  className="w-full bg-white border-2 border-slate-100 rounded-[16px] px-4 py-3.5 text-slate-700 outline-none focus:border-emerald-500 transition-all text-base font-semibold"
+                  className="w-full bg-white border border-slate-200 rounded-[18px] px-4 py-4 text-slate-700 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-base font-medium shadow-sm"
                 />
               </div>
             )}
@@ -226,32 +225,32 @@ export default function AuthScreen({ onLogin }: Props) {
         )}
         
         <div>
-          <label className="block text-xs font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Логин (Email)</label>
+          <label className="block text-[13px] font-semibold text-slate-600 mb-1.5 ml-1">Логин (Email)</label>
           <input 
             type="email" 
             value={email}
             onChange={(e) => { setEmail(e.target.value); setError(null); }}
             placeholder="example@school.ru"
-            className="w-full bg-white border-2 border-slate-100 rounded-[16px] px-4 py-3.5 text-slate-700 outline-none focus:border-emerald-500 transition-all text-base font-semibold"
+            className="w-full bg-white border border-slate-200 rounded-[18px] px-4 py-4 text-slate-700 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-base font-medium shadow-sm"
           />
         </div>
         
         <div>
-          <label className="block text-xs font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Пароль</label>
+          <label className="block text-[13px] font-semibold text-slate-600 mb-1.5 ml-1">Пароль</label>
           <input 
             type="password" 
             value={password}
             onChange={(e) => { setPassword(e.target.value); setError(null); }}
             placeholder="••••••••"
-            className="w-full bg-white border-2 border-slate-100 rounded-[16px] px-4 py-3.5 text-slate-700 outline-none focus:border-emerald-500 transition-all text-base font-semibold"
+            className="w-full bg-white border border-slate-200 rounded-[18px] px-4 py-4 text-slate-700 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all text-base font-medium shadow-sm"
           />
         </div>
 
         <button 
           type="submit"
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-[20px] text-lg py-4 mt-4 shadow-lg shadow-emerald-200 transition-transform active:scale-[0.98] flex items-center justify-center gap-3"
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-3xl text-sm uppercase tracking-widest py-5 mt-6 shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3 border-b-4 border-emerald-800"
         >
-          {isRegister ? <UserPlus size={22} /> : <LogIn size={22} />}
+          {isRegister ? <UserPlus size={20} strokeWidth={3} /> : <LogIn size={20} strokeWidth={3} />}
           {isRegister ? 'Начать обучение' : 'Войти в систему'}
         </button>
       </form>

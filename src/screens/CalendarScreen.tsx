@@ -25,22 +25,24 @@ export default function CalendarScreen({ role, tasks, goals }: Props) {
   const filteredTasks = tasks.filter(task => isSameDay(selectedDate, task.dateTimestamp));
 
   return (
-    <div className="p-6 bg-slate-50 min-h-screen">
+    <div className="p-6 bg-[#fcfdfc] min-h-screen">
       <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
         <CalendarIcon className="text-emerald-500" />
         {role === 'student' ? 'Мое расписание' : role === 'teacher' ? 'Учебный план' : 'Календарь семьи'}
       </h2>
 
-      <div className="bg-white rounded-[32px] p-2 shadow-sm shadow-emerald-50 border border-emerald-50 mb-6">
+      <div className="bg-white rounded-[32px] p-2 shadow-sm border border-slate-100 mb-6 relative overflow-hidden">
         <Calendar 
           className="w-full border-none font-sans" 
           onChange={(value) => setSelectedDate(value as Date)}
           value={selectedDate}
+          locale="ru-RU"
           formatDay={(locale, date) => date.getDate().toString()}
           nextLabel={<ChevronRight size={20} className="text-emerald-600" />}
           prevLabel={<ChevronLeft size={20} className="text-emerald-600" />}
-          tileClassName="h-12 text-sm font-bold text-slate-600 hover:bg-emerald-50 rounded-2xl flex items-center justify-center"
-          tileDisabled={({ activeStartDate, date, view }) => false}
+          next2Label={null}
+          prev2Label={null}
+          tileClassName="h-12 text-sm font-bold text-slate-600 hover:bg-emerald-50 rounded-2xl flex items-center justify-center transition-colors"
         />
       </div>
 
@@ -56,7 +58,7 @@ export default function CalendarScreen({ role, tasks, goals }: Props) {
            </div>
         )}
 
-        <div className="space-y-3 pb-20">
+        <div className="space-y-3 pb-32">
           {filteredTasks.length > 0 ? (
             filteredTasks.map(task => (
               <div key={task.id} className="bg-white p-5 rounded-[24px] shadow-sm border border-slate-100 flex items-center justify-between transition-all hover:border-emerald-200">
@@ -64,7 +66,7 @@ export default function CalendarScreen({ role, tasks, goals }: Props) {
                   <p className="font-bold text-slate-800 truncate">{task.subject}</p>
                   <p className="text-sm text-slate-500 truncate">{task.description}</p>
                 </div>
-                <div className={`ml-3 px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${task.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>
+                <div className={`ml-3 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider ${task.status === 'active' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-50 text-slate-400 border border-slate-100'}`}>
                     {task.status === 'active' ? 'Активно' : 'Завершено'}
                 </div>
               </div>

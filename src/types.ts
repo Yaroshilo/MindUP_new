@@ -23,6 +23,7 @@ export interface Task {
   attachment?: string;
   solution?: string;
   classId?: string; // e.g., "9-A"
+  ownerId?: string; // ID of the user who owns the task
 }
 
 export interface UserProfile {

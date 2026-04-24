@@ -13,70 +13,76 @@ export default function ParentRadarScreen({ tasks, profilePoints, goals, onAddGo
   const activeGoal = goals[0];
 
   return (
-    <div className="p-4 space-y-5 pt-6 bg-emerald-50/20 h-full animate-in fade-in overflow-y-auto">
-      <div className="mb-2">
-        <h1 className="text-3xl font-extrabold text-slate-800">Радар</h1>
-        <p className="text-slate-500 font-semibold mt-1">Мониторинг успехов: Петя</p>
+    <div className="p-5 space-y-6 pt-8 bg-[#fcfdfc] h-full animate-in fade-in overflow-y-auto pb-32">
+      <div className="px-1">
+        <h1 className="text-2xl font-black text-slate-800 uppercase tracking-widest leading-none">Радар</h1>
+        <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest mt-2">Мониторинг успехов: Петя</p>
       </div>
 
       {/* Block 1: Status */}
-      <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[32px] p-6 text-white shadow-xl shadow-emerald-500/20">
-        <div className="flex items-center gap-2 mb-4 opacity-90 font-bold text-sm tracking-wide uppercase">
-          <Activity size={18} /> Статус ребенка
+      <div className="bg-emerald-600 rounded-[32px] p-7 text-white shadow-xl shadow-emerald-500/10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="flex items-center gap-2 mb-6 text-white/60 font-black text-[9px] tracking-[0.2em] uppercase">
+          <Activity size={14} strokeWidth={3} /> Статус активности
         </div>
-        <div className="flex items-end justify-between">
-          <div>
-             <div className="text-4xl font-extrabold">{completedCount} <span className="text-lg font-semibold opacity-80">задач</span></div>
-             <p className="text-emerald-50 font-medium text-sm mt-1">Выполнено за неделю</p>
+        <div className="flex items-end justify-between relative z-10">
+          <div className="space-y-1">
+             <div className="flex items-baseline gap-1.5">
+               <span className="text-4xl font-black">{completedCount}</span>
+               <span className="text-xs font-black uppercase tracking-widest opacity-60">Задач</span>
+             </div>
+             <p className="text-emerald-100 font-bold text-[10px] uppercase tracking-wider opacity-60">За неделю</p>
           </div>
-          <div className="text-right">
-             <div className="text-2xl font-extrabold text-yellow-300">+{profilePoints} XP</div>
-             <p className="text-emerald-50 font-medium text-sm mt-1">Заработано</p>
+          <div className="text-right space-y-1">
+             <div className="text-2xl font-black text-yellow-300">+{profilePoints} XP</div>
+             <p className="text-emerald-100 font-bold text-[10px] uppercase tracking-wider opacity-60">Баланс</p>
           </div>
         </div>
       </div>
 
       {/* Block 2: Alerts */}
-      <h2 className="text-lg font-bold text-slate-800 px-1 pt-2">Сигналы</h2>
-      {missedTasks.length > 0 ? (
-        <div className="space-y-3">
-          {missedTasks.map(t => (
-            <div key={t.id} className="bg-red-50 border-2 border-red-100 rounded-[20px] p-3 flex gap-3 items-center">
-              <div className="bg-red-100 p-2 rounded-full text-red-500 shrink-0">
-                <AlertTriangle size={16} />
+      <div className="space-y-4">
+        <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-2">Сигналы</h2>
+        {missedTasks.length > 0 ? (
+          <div className="space-y-3">
+            {missedTasks.map(t => (
+              <div key={t.id} className="bg-rose-50 border border-rose-100/50 rounded-[24px] p-6 flex gap-5 items-center">
+                <div className="bg-rose-100/50 p-3.5 rounded-[18px] text-rose-500 shrink-0">
+                  <AlertTriangle size={22} strokeWidth={2.5} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-rose-900 leading-tight text-[15px] truncate">{t.description}</h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 mt-1.5">Дедлайн: {t.deadline}</p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-red-900 leading-tight text-sm truncate">{t.description}</h3>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-red-400">Дедлайн: {t.deadline}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="bg-green-50 border-2 border-green-100 rounded-[24px] p-4 flex gap-4 items-start">
-           <div className="bg-green-100 p-2.5 rounded-full text-green-600 shrink-0"><CheckCircle2 size={20} /></div>
-           <div>
-             <h3 className="font-bold text-green-900 leading-tight mb-1">Дедлайны в норме</h3>
-             <p className="text-xs font-bold uppercase tracking-wider text-green-600">Задолженностей не найдено</p>
-           </div>
-        </div>
-      )}
+            ))}
+          </div>
+        ) : (
+          <div className="bg-emerald-50 border border-emerald-100/50 rounded-[28px] p-6 flex gap-5 items-center">
+             <div className="bg-emerald-100/50 p-3.5 rounded-[18px] text-emerald-600 shrink-0"><CheckCircle2 size={26} strokeWidth={2.5} /></div>
+             <div>
+               <h3 className="font-bold text-emerald-900 leading-tight">Всё под контролем</h3>
+               <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mt-1.5">Долгов не обнаружено</p>
+             </div>
+          </div>
+        )}
+      </div>
 
       {/* Block 3: Interactive Call to action */}
       <button 
         onClick={() => !activeGoal && setIsGoalModalOpen(true)}
-        className={`w-full bg-white rounded-[24px] p-4 shadow-sm border-2 transition-all text-left flex items-center justify-between group ${activeGoal ? 'border-lime-200 cursor-default' : 'border-slate-100 hover:border-lime-400 cursor-pointer'}`}
+        className={`w-full bg-white rounded-[28px] p-5 shadow-sm border border-slate-100 transition-all text-left flex items-center justify-between group active:scale-95 ${activeGoal ? 'border-emerald-100' : 'hover:border-emerald-200'}`}
       >
-        <div className="flex gap-3 items-center">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform ${activeGoal ? 'bg-lime-500 text-white' : 'bg-lime-100 text-lime-600 group-hover:scale-110'}`}>
-            <Target size={20} />
+        <div className="flex gap-4 items-center">
+          <div className={`w-12 h-12 rounded-[18px] flex items-center justify-center shrink-0 transition-all ${activeGoal ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20' : 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white'}`}>
+            <Target size={22} strokeWidth={2.5} />
           </div>
           <div>
-            <h3 className="font-bold text-slate-800 text-[15px]">{activeGoal ? 'Цель установлена' : 'Установить совместную цель'}</h3>
-            <p className="text-[11px] font-semibold text-slate-400">{activeGoal ? `Награда: ${activeGoal.reward}` : 'Нажми, чтобы договориться о награде'}</p>
+            <h3 className="font-black text-slate-800 text-[14px] uppercase tracking-wider">{activeGoal ? 'Цель установлена' : 'Установить цель'}</h3>
+            <p className="text-[11px] font-bold text-slate-400 mt-1">{activeGoal ? `Награда: ${activeGoal.reward}` : 'Нажми, чтобы договориться'}</p>
           </div>
         </div>
-        {!activeGoal && <ArrowRight size={18} className="text-slate-300 group-hover:text-lime-500 transition-colors" />}
+        {!activeGoal && <ArrowRight size={18} className="text-slate-300 group-hover:text-emerald-500 transition-colors" />}
       </button>
 
       {/* Goal Modal */}
