@@ -1,0 +1,6 @@
+{
+  "name": "MindUp",
+  "description": "MindUp — твой персональный учебный наставник. Геймифицированный дневник с ИИ-помощником (Ollama), отслеживанием целей и совместной работой учеников, учителей и родителей.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": []
+}
