@@ -43,14 +43,10 @@ VITE_GEMINI_API_KEY="ВАШ_КЛЮЧ_ОТ_GOOGLE_GEMINI"
    npm run build
    ```
 
-3. **Создайте и синхронизируйте папку Android:**
-   Так как у вас еще нет папки `android` в проекте, её нужно добавить. Выполните:
+3. **Синхронизируйте файлы с папкой Android:**
    ```bash
-   npm install @capacitor/android
-   npx cap add android
    npx cap sync android
    ```
-   *(В будущем, когда папка android уже будет существовать, при изменении кода достаточно будет запускать только `npm run build` и `npx cap sync android`)*
 
 4. **Откройте проект в Android Studio:**
    ```bash

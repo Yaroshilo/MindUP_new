@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MindUp</string>
+    <string name="title_activity_main">MindUp</string>
+    <string name="package_name">com.mindup.app</string>
+    <string name="custom_url_scheme">com.mindup.app</string>
+</resources>
